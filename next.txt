@@ -10,3 +10,38 @@ ssr: 첫 방문만 서버들을 거쳐서 정보를 받아오지만, 그 다음�
 이럴 때는 서버를 껐다 켜면 된다.
 
 next 에서는 리액트 라우터 말고 Link를 사용한다.
+
+css를 배치할 때는 가로를 먼저 나누고, 세로를 나누면 된다
+
+반응형 디자인을 할 때는 모바일,테블릿,데스트탑 순서로 작업해야 한다.
+
+antd는 24개의 칼럼으로 되어 있고,
+xs:모바일 sm:태블릿 md:작은데스크탑
+<Col xs={24} md={6} />
+모바일일 때는 100%를 차지하고, 화면이 커질 경우 해당 화면의 25%를 차지한다는 코드
+합쳐서 24이하면 같은 줄에서 나오고,
+24가 넘을 경우 다른 줄에 나온다.
+gutter : 컬럼 사이의 간격
+
+_blank로 창을 열 때 보안의 위협이 있으므로, noreferrer ,nopener를 추가해준다.
+ target="_blank"
+            rel="noreferrer nopener"
+
+발생하는 오류는 블로그에 작성하는 것이 좋다.
+
+컴포넌트에 props로 넘겨주는 함수는 useCallback을 사용해야 최적화가 된다.
+
+<div style={{ marginTop: "18px" }}>
+자바스크립트에서 객체는 비교할 때마다 false가 된다.
+위의 태그처럼 style={{}}을 객체로 넣을 경우, 리액트가 리랜더링 될 때마다 false가 되어 해당 div내의 부분을 리랜더링하게 된다.
+
+ant design의 Input.Search를 스타일 컴포넌트로 만들어서 css를 적용하고 싶으면,
+const SearchInput = styled(Input.Search)`
+위의 코드와 같이 ()안에 넣어주고 작업하면 된다.
+스타일 컴포넌트로 바꾸고 싶지 않으면, useMemo를 사용한다.
+const Newstyle = UseMemo(()=>({marginTop:18}),[]);
+이렇게 하고, <div style={Newstyle}> 이렇게 넣으면 된다.
+
+함수형 컴포넌트에서 리랜더링 될 때는 함수 내의 모든 것이 재실행 된다.
+useCallback, useMemo 는 캐싱이라서 배열 부분이 변경되지 않으면 재실행 되지 않는다.
+return부분 중에 바뀌는 부분이 있으면 해당 부분만 재실행 된다.

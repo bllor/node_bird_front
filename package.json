@@ -9,11 +9,14 @@
   "author": "bllor",
   "license": "ISC",
   "dependencies": {
+    "@ant-design/icons": "^5.5.2",
+    "antd": "^5.22.6",
     "cross-env": "^7.0.3",
     "next": "^9.5.5",
     "prop-types": "^15.8.1",
     "react": "^16.14.0",
-    "react-dom": "^16.14.0"
+    "react-dom": "^16.14.0",
+    "styled-components": "^6.1.13"
   },
   "devDependencies": {
     "eslint": "^9.17.0",
