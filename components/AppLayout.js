@@ -7,7 +7,8 @@ import UserProfile from "./userProfile";
 import LoginForm from "./loginForm";
 import styled from "styled-components";
 const AppLayout = ({ children }) => {
-  const [isLoginedIn, setIsLoginedIn] = useState();
+  const [isLoginedIn, setIsLoginedIn] = useState(false);
+  console.log(isLoginedIn);
   return (
     <div>
       <Menu mode="horizontal">
@@ -32,7 +33,11 @@ const AppLayout = ({ children }) => {
       </Menu>
       <Row gutter={8}>
         <Col xs={24} md={6}>
-          {isLoginedIn ? <UserProfile /> : <LoginForm />}
+          {isLoginedIn ? (
+            <UserProfile setIsLoginedIn={setIsLoginedIn} />
+          ) : (
+            <LoginForm setIsLoginedIn={setIsLoginedIn} />
+          )}
         </Col>
         <Col xs={24} md={12}>
           {children}
