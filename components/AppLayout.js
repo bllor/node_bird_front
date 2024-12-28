@@ -8,7 +8,6 @@ import LoginForm from "./loginForm";
 import styled from "styled-components";
 const AppLayout = ({ children }) => {
   const [isLoginedIn, setIsLoginedIn] = useState(false);
-  console.log(isLoginedIn);
   return (
     <div>
       <Menu mode="horizontal">

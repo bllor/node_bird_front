@@ -48,3 +48,59 @@ return부분 중에 바뀌는 부분이 있으면 해당 부분만 재실행 된
 
 
 리액트에서 배열로 jsx를 사용하려면 key를 붙혀주어야 한다.
+
+noreferrer : 이전페이지를 알려주지 않는 것
+nopener : 어디서 열었는지 안알려주는 것 
+
+리랜더링 되는 것이 성능이 나빠지는 것은 아닌데, 화면을 다시 그리고 함수가 다시 실행되면 성능에 이슈를 줄 수 있다.
+
+제이쿼리를 사용할 때는 리액트와 분리하여 사용해야 한다.
+
+코드가 100줄이 넘어가면 컴포넌트를 분리하기?
+
+커스텀 훅: 반복문, 조건문, 함수 안에서는 사용 못하고, 컴포넌트 안에서만 사용 가능하다.
+
+
+const onSubmit = useCallback(
+  (e) => {
+    e.preventDefault(); // 기본 동작 방지
+    console.log("passwordCheck 값:", passwordCheck); // 디버깅용
+    if (password !== passwordCheck) {
+      console.log("비밀번호 불일치:", password, "|", passwordCheck);
+      return setPasswordError(true);
+    }
+    if (!term) {
+      return setTermError(true);
+    }
+    console.log("회원가입 성공:", { id, nickName, password });
+  },
+  [password]
+)
+해당 함수를 사용할 때 passwordCheck값이 pass와 같은데도 불구하고,
+일치하지 않는다고 하고, console.log에 값이 출력되지 않는 문제가 있었다.
+useCallback은 의존성 배열에 값이 없을 경우, 첫 로딩시의 값을 가지고 사용하는데,
+passwordCheck는 의존성 배열에 없으므로, 첫로딩 시 값인 ''이 나왔던 것이다.
+그래서 아래와 같이 수정을 하니 함수가 작동을 잘하는 것을 확인할 수 있었다.
+
+const onSubmit = useCallback(
+  (e) => {
+    e.preventDefault(); // 기본 동작 방지
+    console.log("passwordCheck 값:", passwordCheck); // 디버깅용
+    if (password !== passwordCheck) {
+      console.log("비밀번호 불일치:", password, "|", passwordCheck);
+      return setPasswordError(true);
+    }
+    if (!term) {
+      return setTermError(true);
+    }
+    console.log("회원가입 성공:", { id, nickName, password });
+  },
+  [password, passwordCheck, term]
+)
+
+리덕스는 코드를 입력해야하는 양이 많아서 생산성이 좋지 않다.
+리덕스를 사용하는 이유는 여러 컴포넌트들에서 공통으로 사용되는 경우,
+중앙데이터 저장소를 만들어서 사용하는데, 리덕스가 중앙데이터 역할을 한다.
+리덕스는 원리가 간단하고, 추적하기 쉽다. 코드 입력량이 많다.
+컨텍스트 api에서는 비동기 처리를 하기 힘들고 직접 구현해야 한다.
+
