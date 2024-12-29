@@ -6,18 +6,19 @@ import { Input, Menu, Row, Col } from "antd";
 import UserProfile from "./userProfile";
 import LoginForm from "./loginForm";
 import styled from "styled-components";
+import { useSelector } from "react-redux";
 const AppLayout = ({ children }) => {
-  const [isLoginedIn, setIsLoginedIn] = useState(false);
+  const isLoggedIn = useSelector((state) => state.user.isLoggedIn);
   return (
     <div>
       <Menu mode="horizontal">
         <Menu.Item>
-          <Link href="/">
+          <Link href="/" legacyBehavior>
             <a>노드버드</a>
           </Link>
         </Menu.Item>
         <Menu.Item>
-          <Link href="/profile">
+          <Link href="/profile" legacyBehavior>
             <a>프로필</a>
           </Link>
         </Menu.Item>
@@ -25,18 +26,14 @@ const AppLayout = ({ children }) => {
           <SearchInput enterButton></SearchInput>
         </Menu.Item>
         <Menu.Item>
-          <Link href="/signup">
+          <Link href="/signup" legacyBehavior>
             <a>회원가입</a>
           </Link>
         </Menu.Item>
       </Menu>
       <Row gutter={8}>
         <Col xs={24} md={6}>
-          {isLoginedIn ? (
-            <UserProfile setIsLoginedIn={setIsLoginedIn} />
-          ) : (
-            <LoginForm setIsLoginedIn={setIsLoginedIn} />
-          )}
+          {isLoggedIn ? <UserProfile /> : <LoginForm />}
         </Col>
         <Col xs={24} md={12}>
           {children}

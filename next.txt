@@ -104,3 +104,35 @@ const onSubmit = useCallback(
 리덕스는 원리가 간단하고, 추적하기 쉽다. 코드 입력량이 많다.
 컨텍스트 api에서는 비동기 처리를 하기 힘들고 직접 구현해야 한다.
 
+리덕스
+리덕스에서는 데이터를 변경하려면 action을 만들어야함 (type은 action의 이름)
+액션을 dispatch하면 중앙저장소인 redux의 데이터가 변경된다.
+액션이 dispatch되면 reducer에서 액션에 따라 실행을 다르게 한다.
+데이터를 변경할 때마다 action을 만들어주고, reducer에 어떻게 처리할지 적어줘야해서 코드량이 많다.
+
+*자바스크립트의 불변성
+{} ==={} //false
+const a  = {}
+b = a
+a===b// true
+
+리듀서에서 객체를 새로 만들어서 보내주는데 그 이유는?
+기록을 남기기 위해서,
+const prev = {name:'dd'}
+const next = {name:'aa'}
+이렇게 두 개는 서로 다르다.
+const next = prev;
+next.name ='aa';
+이렇게 하면 prev가 'aa'가 되므로, 비교할 데이터가 없어진다.
+
+return{...state, name:action.data}
+...state를 하는 이유는 메모리를 아끼기 위해서.
+변경되지 않을 때도 새로운 객체를 계속 생성하여 메모리 소비가 있다.
+
+store는 저장소와 reducer를 포함한 것
+
+redux dev tools에서 diff는 어떻게 변했는지 알 수 있게 해줌
+버튼 클릭 시 상태변경도 가능하므로 편함
+
+
+시퀄라이즈에서 정보가 겹칠 경우, 합쳐서 주는데 대문자로 내보내줌

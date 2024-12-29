@@ -4,13 +4,16 @@ import Link from "next/link";
 import styled from "styled-components";
 import PropTypes from "prop-types";
 import useInput from "../hooks/useInput";
-const LoginForm = ({ setIsLoginedIn }) => {
+import { useDispatch } from "react-redux";
+import { loginAction } from "../reducers";
+const LoginForm = () => {
+  const dispatch = useDispatch();
   const [id, onChangeId] = useInput("");
   const [password, onChangePassword] = useInput("");
 
   const onSubmitForm = useCallback(() => {
     console.log(id, password);
-    setIsLoginedIn(true);
+    dispatch(loginAction(id, password));
   }, [id, password]);
 
   return (
@@ -39,7 +42,7 @@ const LoginForm = ({ setIsLoginedIn }) => {
         <Button type="primary" htmlType="submit" loading={false}>
           로그인
         </Button>
-        <Link href="/signup">
+        <Link href="/signup" legacyBehavior>
           <a>
             <Button>회원가입</Button>
           </a>
@@ -49,9 +52,6 @@ const LoginForm = ({ setIsLoginedIn }) => {
   );
 };
 
-LoginForm.propTypes = {
-  setIsLoginedIn: PropTypes.func.isRequired,
-};
 export default LoginForm;
 
 const ButtonWrapper = styled.div`

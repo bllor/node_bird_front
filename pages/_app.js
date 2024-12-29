@@ -1,6 +1,6 @@
 import PropTypes from "prop-types";
-import "antd/dist/reset.css";
-import React from "react";
+// import "antd/dist/antd.css"; // 전체 Ant Design 스타일을 포함
+import React, { useEffect } from "react";
 import Head from "next/head";
 import wrapper from "../store/configure-store";
 
