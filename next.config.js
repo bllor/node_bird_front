@@ -2,6 +2,12 @@ const withBundleAnalyzer = require("@next/bundle-analyzer")({
   enabled: process.env.ANALYZE === "true",
 });
 
+const withTM = require("next-transpile-modules");
+
+module.exports = withTM(["@ant-design/icons", "antd", "rc-picker", "rc-util"])({
+  // Other Next.js configurations
+});
+
 module.exports = withBundleAnalyzer({
   images: {
     domains: [
