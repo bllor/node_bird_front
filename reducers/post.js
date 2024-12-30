@@ -44,13 +44,30 @@ export const initialState = {
   postAdded: false, //게시글 추가가 완료될 때
 };
 
-const ADD_POST = 'ADD_POST';
+const ADD_POST = "ADD_POST";
 export const addPost = {
-    type: ADD_POST,
-}
+  type: ADD_POST,
+};
+
+const dummy_post = {
+  id: 2,
+  content: "더미 데이터입니다",
+  User: {
+    id: 1,
+    nickName: "dongil",
+  },
+  Images: [],
+  Comments: [],
+};
 
 const post = (state = initialState, action) => {
   switch (action.type) {
+    case ADD_POST:
+      return {
+        ...state,
+        mainPosts: [dummy_post, ...state.mainPosts],
+        postAdded: true,
+      };
     default:
       return state;
   }
