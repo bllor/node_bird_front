@@ -147,4 +147,40 @@ redux dev tools에서 diff는 어떻게 변했는지 알 수 있게 해줌
 
 컴포넌트로 분리할 때는 덩어리를 분리하거나, map안에 있는 애들을 분리하는 것이 좋다.
 
+renderItem={(item) => {
+              <li>
+                <Comment
+                  author={item.User.nickName}
+                  avatar={<Avatar>{item.User.nickName}</Avatar>}
+                  content={item.content}
+                ></Comment>
+              </li>
+            }}
+다음과 같이 사용할 때 리턴 되지 않는 이슈가 있었다.
+지피티에게 물어보니 
+renderItem={(item) => (
+              <li>
+                <Comment
+                  author={item.User.nickName}
+                  avatar={<Avatar>{item.User.nickName}</Avatar>}
+                  content={item.content}
+                ></Comment>
+              </li>
+            )}            
+다음과 같이 사용해야 한다고 했다.
+()=>() 와 ()=>{}는 비슷하게 생긴 것 같은데 왜 동작하는 것이 다를까?
+()=>()
+특징: 중괄호({}) 대신 소괄호(())를 사용하면, 화살표 함수는 중괄호 없이 표현식(expression)을 평가하고 그 결과를 자동으로 반환합니다.
+주로 사용: 함수가 단일 표현식만 반환하는 경우
+()=>{}
+특징: 중괄호({})를 사용하면 함수 본문을 명시적으로 정의하고, 반환값을 주려면 return 키워드를 써야 합니다.
+주로 사용: 복잡한 로직이 있는 함수.
+
+const Overlay = styled.div₩₩
+위와 같은 형태로 스타일컴포넌트를 사용하는데, 이는 자바스크립트의 문법이다.
+함수를 불러오는 방법 중에 ₩₩으로 불러오는 방법이 있기 때문.
+
+이미 정해져있는 클래스명에 있는 css를 수정하려면 글로벌스타일로 적용해준다.
+
+css에 transform이 있는 경우, position:fixed를 정확히 잡지 못한다.
 
