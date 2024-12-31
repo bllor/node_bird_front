@@ -9,7 +9,7 @@ import styled, { createGlobalStyle } from "styled-components";
 import { useSelector } from "react-redux";
 const AppLayout = ({ children }) => {
   const isLoggedIn = useSelector((state) => state.user.isLoggedIn);
-
+  console.log("isLoggedIn", isLoggedIn);
   const Global = createGlobalStyle`
     .ant-row{
       margin-right: 0 !important;

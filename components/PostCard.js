@@ -12,6 +12,7 @@ import { useSelector } from "react-redux";
 import PostImages from "./PostImages";
 import CommentForm from "./CommentForm";
 import { Comment } from "@ant-design/compatible";
+import PostCardContent from "./PostCardContent";
 const PostCard = ({ post }) => {
   const [liked, setLike] = useState(false);
   const [commentFromOpened, steCommentFromOpened] = useState(false);
@@ -64,7 +65,7 @@ const PostCard = ({ post }) => {
         <Card.Meta
           avatar={<Avatar>{post.User.nickName}</Avatar>}
           title={post.User.nickName}
-          // description={post.content}
+          description={<PostCardContent postData={post.content} />}
         />
       </Card>
       {commentFromOpened && (
