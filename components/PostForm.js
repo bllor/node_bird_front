@@ -1,23 +1,27 @@
-import React, { useCallback, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Form, Input, Button } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 import { addPost } from "../reducers/post";
 const PostForm = () => {
-  const { imagePaths } = useSelector((state) => state.post);
-  const [text, setText] = useState("");
+  const { imagePaths, addPostDone } = useSelector((state) => state.post);
+  const [text, onChangeText, setText] = useState("");
   const imageInput = useRef();
   const dispatch = useDispatch();
-  const onChangeText = useCallback((e) => {
-    setText(e.target.value);
-  }, []);
 
   const onClickImageUpload = useCallback(() => {
     imageInput.current.click();
   }, [imageInput.current]);
 
   const onSubmit = useCallback(() => {
-    dispatch(addPost);
-  }, []);
+    dispatch(addPost(text));
+    // setText("");// 서버에서 코멘트 작성 완료 신호가 올 때  초기화할 수 있게 만들어야 한다.
+  }, [text]);
+
+  useEffect(() => {
+    if (addPostDone) {
+      setText("");
+    }
+  }, [addPostDone]);
 
   return (
     <Form

@@ -7,7 +7,7 @@ const UserProfile = () => {
   // const { me, isLoggingOut } = useSelector((state) => {
   //   state.user;
   // });
-  const { me, isLoggingOut } = useSelector((state) => state.user);
+  const { me, logOutLoading } = useSelector((state) => state.user);
 
   console.log("me", me);
   const onLogOut = useCallback(() => {
@@ -18,13 +18,16 @@ const UserProfile = () => {
     <Card
       actions={[
         <div key="twit">
-          짹짹<br></br>0
+          짹짹<br></br>
+          {me.Posts.length}
         </div>,
         <div key="followings">
-          팔로잉<br></br>0
+          팔로잉<br></br>
+          {me.Followings.length}
         </div>,
         <div key="followings">
-          팔로워<br></br>0
+          팔로워<br></br>
+          {me.Followers.length}
         </div>,
       ]}
     >
@@ -32,7 +35,7 @@ const UserProfile = () => {
         avatar={<Avatar>{me.nickName[0]}</Avatar>}
         title={me.nickName}
       ></Card.Meta>
-      <Button onClick={onLogOut} loading={isLoggingOut}>
+      <Button onClick={onLogOut} loading={logOutLoading}>
         로그아웃
       </Button>
     </Card>

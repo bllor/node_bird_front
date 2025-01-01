@@ -1,3 +1,12 @@
+import {
+  ADD_COMMENT_FAILURE,
+  ADD_COMMENT_REQUEST,
+  ADD_COMMENT_SUCCESS,
+  ADD_POST_FAILURE,
+  ADD_POST_REQUEST,
+  ADD_POST_SUCCESS,
+} from "saga/post";
+
 export const initialState = {
   mainPosts: [
     {
@@ -41,13 +50,23 @@ export const initialState = {
     },
   ],
   imagesPaths: [],
-  postAdded: false, //게시글 추가가 완료될 때
+  addPostLoading: false, //게시글 추가 로딩
+  addPostDone: false,
+  addPostError: null,
+  addCommentLoading: false, //게시글 추가 로딩
+  addCommentDone: false,
+  addCommentError: null,
 };
 
-const ADD_POST = "ADD_POST";
-export const addPost = {
-  type: ADD_POST,
-};
+export const addPost = (data) => ({
+  type: ADD_POST_REQUEST,
+  data,
+});
+
+export const addComment = (data) => ({
+  type: ADD_COMMENT_REQUEST,
+  data,
+});
 
 const dummy_post = {
   id: 2,
@@ -62,11 +81,41 @@ const dummy_post = {
 
 const post = (state = initialState, action) => {
   switch (action.type) {
-    case ADD_POST:
+    case ADD_POST_REQUEST:
+      return {
+        addPostLoading: true,
+        addPostDone: false,
+        addPostError: null,
+      };
+    case ADD_POST_SUCCESS:
       return {
         ...state,
         mainPosts: [dummy_post, ...state.mainPosts],
-        postAdded: true,
+        addPostLoading: false,
+        addPostDone: true,
+      };
+    case ADD_POST_FAILURE:
+      return {
+        addPostLoading: false,
+        addPostError: action.error,
+      };
+    case ADD_COMMENT_REQUEST:
+      return {
+        addCommentLoading: true,
+        addCommentDone: false,
+        addCommentError: null,
+      };
+    case ADD_COMMENT_SUCCESS:
+      return {
+        ...state,
+        mainPosts: [dummy_post, ...state.mainPosts],
+        addCommentLoading: false,
+        addCommentDone: true,
+      };
+    case ADD_COMMENT_FAILURE:
+      return {
+        addCommentLoading: false,
+        addCommentError: action.error,
       };
     default:
       return state;
