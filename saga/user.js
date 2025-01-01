@@ -107,6 +107,44 @@ function* changeNickName(action) {
   }
 }
 
+function FollowAPI() {
+  return "요청";
+}
+function* Follow(action) {
+  try {
+    // const result = yield call(changeNickNameAPI);
+    yield 1000;
+    yield put({
+      type: FOLLOW_SUCCESS,
+      data: action.data,
+    });
+  } catch (err) {
+    yield put({
+      type: FOLLOW_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+function UnFollowAPI() {
+  return "요청";
+}
+function* UnFollow(action) {
+  try {
+    // const result = yield call(changeNickNameAPI);
+    yield 1000;
+    yield put({
+      type: UNFOLLOW_SUCCESS,
+      data: action.data,
+    });
+  } catch (err) {
+    yield put({
+      type: UNFOLLOW_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
 function* watchLogin() {
   //로그인 액션이 실행될 때까지 기다린다.
   //얘네들이 이벤트 리스너처럼 동작한다.
@@ -133,8 +171,18 @@ function* watchChangeNickName() {
   yield takeLatest(CHANGE_NICKNAME_REQUEST, changeNickName);
 }
 
+function* watchFollow() {
+  yield takeLatest(FOLLOW_REQUEST, Follow);
+}
+
+function* watchUnFollow() {
+  yield takeLatest(UNFOLLOW_REQUEST, UnFollow);
+}
+
 export default function* userSaga() {
   yield all([
+    fork(watchFollow),
+    fork(watchUnFollow),
     fork(watchLogin),
     fork(watchLogout),
     fork(watchSignUp),

@@ -1,6 +1,7 @@
 import { all, call, delay, fork, put, takeLatest } from "redux-saga/effects";
 import { ADD_POST_TO_ME, REMOVE_POST_TO_ME } from "./user";
 import shortid from "shortid";
+import { generateDummyPost } from "reducers/post";
 export const ADD_POST_REQUEST = "ADD_POST_REQUEST";
 export const ADD_POST_SUCCESS = "ADD_POST_SUCCESS";
 export const ADD_POST_FAILURE = "ADD_POST_FAILURE";
@@ -12,6 +13,10 @@ export const REMOVE_POST_FAILURE = "REMOVE_POST_FAILURE";
 export const ADD_COMMENT_REQUEST = "ADD_COMMENT_REQUEST";
 export const ADD_COMMENT_SUCCESS = "ADD_COMMENT_SUCCESS";
 export const ADD_COMMENT_FAILURE = "ADD_COMMENT_FAILURE";
+
+export const LOAD_POST_REQUEST = "LOAD_POST_REQUEST";
+export const LOAD_POST_SUCCESS = "LOAD_POST_SUCCESS";
+export const LOAD_POST_FAILURE = "LOAD_POST_FAILURE";
 
 function addPostAPI(data) {
   return "요청";
@@ -33,6 +38,27 @@ function* addPost(action) {
   } catch (err) {
     yield put({
       type: "ADD_POST_FAILURE",
+      data: err.response.data,
+    });
+  }
+}
+
+function loadPostAPI(data) {
+  return "요청";
+}
+function* loadPost(action) {
+  try {
+    // const result = yield call(addPostAPI, action.data);
+    yield delay(1000);
+    console.log("post delay finish");
+    const id = shortid.generate();
+    yield put({
+      type: LOAD_POST_SUCCESS,
+      data: generateDummyPost(10),
+    });
+  } catch (err) {
+    yield put({
+      type: LOAD_POST_FAILURE,
       data: err.response.data,
     });
   }
@@ -92,6 +118,14 @@ function* watchAddComment() {
 function* watchRemovePost() {
   yield takeLatest(REMOVE_POST_REQUEST, removePost);
 }
+function* watchLoadPost() {
+  yield takeLatest(LOAD_POST_REQUEST, loadPost);
+}
 export default function* postSaga() {
-  yield all([fork(watchAddPost), fork(watchAddComment), fork(watchRemovePost)]);
+  yield all([
+    fork(watchAddPost),
+    fork(watchLoadPost),
+    fork(watchAddComment),
+    fork(watchRemovePost),
+  ]);
 }

@@ -3,6 +3,9 @@ import {
   CHANGE_NICKNAME_FAILURE,
   CHANGE_NICKNAME_REQUEST,
   CHANGE_NICKNAME_SUCCESS,
+  FOLLOW_FAILURE,
+  FOLLOW_REQUEST,
+  FOLLOW_SUCCESS,
   LOG_IN_FAILURE,
   LOG_IN_REQUEST,
   LOG_IN_SUCCESS,
@@ -13,6 +16,9 @@ import {
   SIGN_UP_FAILURE,
   SIGN_UP_REQUEST,
   SIGN_UP_SUCCESS,
+  UNFOLLOW_FAILURE,
+  UNFOLLOW_REQUEST,
+  UNFOLLOW_SUCCESS,
 } from "saga/user";
 import produce from "immer";
 
@@ -29,6 +35,12 @@ export const initialState = {
   changeNickNameLoading: false, //닉네임변경 시도중
   changeNickNameDone: false,
   changeNickNameError: false,
+  followLoading: false, //팔로우 시도중
+  followDone: false,
+  followError: false,
+  unFollowLoading: false, //언팔로우 시도중
+  unFollowDone: false,
+  unFollowError: false,
   me: null,
   signUpData: {},
   loginData: {},
@@ -73,6 +85,36 @@ const dummyUser = (data) => ({
 const user = (state = initialState, action) => {
   return produce(state, (draft) => {
     switch (action.type) {
+      case FOLLOW_REQUEST:
+        draft.followLoading = true;
+        draft.followDone = false;
+        draft.followError = null;
+        break;
+      case FOLLOW_SUCCESS:
+        draft.followLoading = false;
+        draft.followDone = true;
+        draft.me.Followings.push({ id: action.data });
+        break;
+      case FOLLOW_FAILURE:
+        draft.unFollowLoading = false;
+        draft.unFollowError = action.error;
+        break;
+      case UNFOLLOW_REQUEST:
+        draft.unFollowLoading = true;
+        draft.unFollowDone = false;
+        draft.unFollowError = null;
+        break;
+      case UNFOLLOW_SUCCESS:
+        draft.unFollowLoading = false;
+        draft.unFollowDone = true;
+        draft.me.Followings = draft.me.Followings.filter(
+          (v) => v.id !== action.data
+        );
+        break;
+      case UNFOLLOW_FAILURE:
+        draft.followLoading = false;
+        draft.followError = action.error;
+        break;
       case LOG_IN_REQUEST:
         draft.loginLoading = true;
         draft.loginDone = false;
