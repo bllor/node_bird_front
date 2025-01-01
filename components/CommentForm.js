@@ -7,7 +7,9 @@ import useInput from "../hooks/useInput";
 
 function CommentForm({ post }) {
   const id = useSelector((state) => state.user.me?.id);
-  const { addPostComment } = useSelector((state) => state.post);
+  const { addPostComment, addCommentLoading } = useSelector(
+    (state) => state.post
+  );
   const dispatch = useDispatch();
   const [commentText, onChangeCommentText, setCommentText] = useInput("");
   const onSubmitComment = useCallback(() => {
@@ -33,9 +35,10 @@ function CommentForm({ post }) {
           rows={4}
         />
         <Button
-          style={{ position: "absolute", right: 0, bottom: -40 }}
+          style={{ position: "absolute", right: 0, bottom: -40, zIndex: 1 }}
           type="primary"
           htmlType="submit"
+          loading={addCommentLoading}
         >
           삐약
         </Button>

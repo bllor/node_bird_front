@@ -1,8 +1,13 @@
 import { all, call, delay, fork, put, takeLatest } from "redux-saga/effects";
-
+import { ADD_POST_TO_ME, REMOVE_POST_TO_ME } from "./user";
+import shortid from "shortid";
 export const ADD_POST_REQUEST = "ADD_POST_REQUEST";
 export const ADD_POST_SUCCESS = "ADD_POST_SUCCESS";
 export const ADD_POST_FAILURE = "ADD_POST_FAILURE";
+
+export const REMOVE_POST_REQUEST = "REMOVE_POST_REQUEST";
+export const REMOVE_POST_SUCCESS = "REMOVE_POST_SUCCESS";
+export const REMOVE_POST_FAILURE = "REMOVE_POST_FAILURE";
 
 export const ADD_COMMENT_REQUEST = "ADD_COMMENT_REQUEST";
 export const ADD_COMMENT_SUCCESS = "ADD_COMMENT_SUCCESS";
@@ -13,14 +18,45 @@ function addPostAPI(data) {
 }
 function* addPost(action) {
   try {
-    const result = yield call(addPostAPI, action.data);
+    // const result = yield call(addPostAPI, action.data);
+    yield delay(1000);
+    console.log("post delay finish");
+    const id = shortid.generate();
     yield put({
       type: ADD_POST_SUCCESS,
-      data: result.data,
+      data: { id: id, content: action.data },
+    });
+    yield put({
+      type: ADD_POST_TO_ME,
+      data: id,
     });
   } catch (err) {
     yield put({
       type: "ADD_POST_FAILURE",
+      data: err.response.data,
+    });
+  }
+}
+
+function removePostAPI(data) {
+  return "요청";
+}
+function* removePost(action) {
+  try {
+    // const result = yield call(addPostAPI, action.data);
+    yield delay(1000);
+    console.log("remove delay finish");
+    yield put({
+      type: REMOVE_POST_SUCCESS,
+      data: action.data,
+    });
+    yield put({
+      type: REMOVE_POST_TO_ME,
+      data: action.data,
+    });
+  } catch (err) {
+    yield put({
+      type: REMOVE_POST_FAILURE,
       data: err.response.data,
     });
   }
@@ -34,12 +70,12 @@ function* addComment(action) {
     yield delay(1000);
     // const result = yield call(addCommentAPI, action.data);
     yield put({
-      type: ADD_POST_SUCCESS,
+      type: ADD_COMMENT_SUCCESS,
       data: action.data,
     });
   } catch (err) {
     yield put({
-      type: "ADD_POST_FAILURE",
+      type: ADD_COMMENT_FAILURE,
       data: err.response.data,
     });
   }
@@ -52,6 +88,10 @@ function* watchAddPost() {
 function* watchAddComment() {
   yield takeLatest(ADD_COMMENT_REQUEST, addComment);
 }
+
+function* watchRemovePost() {
+  yield takeLatest(REMOVE_POST_REQUEST, removePost);
+}
 export default function* postSaga() {
-  yield all([fork(watchAddPost), fork(watchAddComment)]);
+  yield all([fork(watchAddPost), fork(watchAddComment), fork(watchRemovePost)]);
 }

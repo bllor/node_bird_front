@@ -8,16 +8,18 @@ import {
 import { Avatar, Button, Card, List, Popover } from "antd";
 import PropTypes from "prop-types";
 import React, { useCallback, useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import PostImages from "./PostImages";
 import CommentForm from "./CommentForm";
 import { Comment } from "@ant-design/compatible";
 import PostCardContent from "./PostCardContent";
+import { REMOVE_POST_REQUEST } from "saga/post";
 const PostCard = ({ post }) => {
+  const dispatch = useDispatch();
   const [liked, setLike] = useState(false);
+  const { removePostLoading } = useSelector((state) => state.post);
   const [commentFromOpened, steCommentFromOpened] = useState(false);
   const id = useSelector((state) => state.user.me?.id);
-
   const onToggleComment = useCallback(() => {
     steCommentFromOpened((prev) => !prev);
   }, []);
@@ -25,6 +27,13 @@ const PostCard = ({ post }) => {
   const onToggelLike = useCallback(() => {
     // setLike(!liked);
     setLike((prev) => !prev);
+  }, []);
+
+  const onRemovePost = useCallback(() => {
+    dispatch({
+      type: REMOVE_POST_REQUEST,
+      data: post.id,
+    });
   }, []);
 
   return (
@@ -50,7 +59,13 @@ const PostCard = ({ post }) => {
                 {id && post.User.id === id ? (
                   <>
                     <Button>수정</Button>
-                    <Button type="danger">삭제</Button>
+                    <Button
+                      type="danger"
+                      onClick={onRemovePost}
+                      loading={removePostLoading}
+                    >
+                      삭제
+                    </Button>
                   </>
                 ) : (
                   <Button>신고</Button>
@@ -79,7 +94,7 @@ const PostCard = ({ post }) => {
               <li>
                 <Comment
                   author={item.User.nickName}
-                  avatar={<Avatar>{item.User.nickName}</Avatar>}
+                  avatar={<Avatar>{item.User.nickName[0]}</Avatar>}
                   content={item.content}
                 ></Comment>
               </li>

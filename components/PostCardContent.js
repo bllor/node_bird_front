@@ -12,6 +12,8 @@ const PostCardContent = ({ postData }) => {
               <a>{v}</a>
             </Link>
           );
+        } else {
+          return v;
         }
       })}
     </div>

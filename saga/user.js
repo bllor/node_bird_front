@@ -4,7 +4,11 @@ export const LOG_IN_SUCCESS = "LOG_IN_SUCCESS";
 export const LOG_IN_FAILURE = "LOG_IN_FAILURE";
 export const LOG_OUT_REQUEST = "LOG_OUT_REQUEST";
 export const LOG_OUT_SUCCESS = "LOG_OUT_SUCCESS";
-export const LOG_OUT_FAILURE = "LOG_IN_FAILURE";
+export const LOG_OUT_FAILURE = "LOG_OUT_FAILURE";
+export const CHANGE_NICKNAME_REQUEST = "CHANGE_NICKNAME_REQUEST";
+export const CHANGE_NICKNAME_SUCCESS = "CHANGE_NICKNAME_SUCCESS";
+export const CHANGE_NICKNAME_FAILURE = "CHANGE_NICKNAME_FAILURE";
+
 export const SIGN_UP_REQUEST = "SIGN_UP_REQUEST";
 export const SIGN_UP_SUCCESS = "SIGN_UP_SUCCESS";
 export const SIGN_UP_FAILURE = "SIGN_UP_FAILURE";
@@ -15,6 +19,9 @@ export const UNFOLLOW_REQUEST = "UNFOLLOW_REQUEST";
 export const UNFOLLOW_SUCCESS = "UNFOLLOW_SUCCESS";
 export const UNFOLLOW_FAILURE = "UNFOLLOW_FAILURE";
 
+export const ADD_POST_TO_ME = "ADD_POST_TO_ME";
+export const REMOVE_POST_TO_ME = "REMOVE_POST_TO_ME";
+
 function loginAPI(data) {
   console.log("loginAPI", data);
   return "요청";
@@ -24,7 +31,9 @@ function loginAPI(data) {
 function* login(action) {
   try {
     // const result = yield call(loginAPI, action.data);
+    console.log("Starting delay...");
     yield delay(1000);
+    console.log("Delay finished.");
     yield put({
       type: LOG_IN_SUCCESS,
       data: action.data,
@@ -79,6 +88,25 @@ function* signUp(action) {
   }
 }
 
+function changeNickNameAPI() {
+  return "요청";
+}
+function* changeNickName(action) {
+  try {
+    // const result = yield call(changeNickNameAPI);
+    yield 1000;
+    yield put({
+      type: CHANGE_NICKNAME_SUCCESS,
+      data: action.data,
+    });
+  } catch (err) {
+    yield put({
+      type: CHANGE_NICKNAME_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
 function* watchLogin() {
   //로그인 액션이 실행될 때까지 기다린다.
   //얘네들이 이벤트 리스너처럼 동작한다.
@@ -101,6 +129,15 @@ function* watchSignUp() {
   yield takeLatest(SIGN_UP_REQUEST, signUp);
 }
 
+function* watchChangeNickName() {
+  yield takeLatest(CHANGE_NICKNAME_REQUEST, changeNickName);
+}
+
 export default function* userSaga() {
-  yield all([fork(watchLogin), fork(watchLogout), fork(watchSignUp)]);
+  yield all([
+    fork(watchLogin),
+    fork(watchLogout),
+    fork(watchSignUp),
+    fork(watchChangeNickName),
+  ]);
 }

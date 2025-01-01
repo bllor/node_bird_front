@@ -1,12 +1,12 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import Link from 'next/link';
-import { Input, Menu, Row, Col } from 'antd';
+import React from "react";
+import PropTypes from "prop-types";
+import Link from "next/link";
+import { Input, Menu, Row, Col } from "antd";
 
-import styled, { createGlobalStyle } from 'styled-components';
-import { useSelector } from 'react-redux';
-import UserProfile from './userProfile';
-import LoginForm from './loginForm';
+import styled, { createGlobalStyle } from "styled-components";
+import { useSelector } from "react-redux";
+import UserProfile from "./userProfile";
+import LoginForm from "./loginForm";
 
 function AppLayout({ children }) {
   const { me } = useSelector((state) => state.user);
@@ -24,7 +24,6 @@ function AppLayout({ children }) {
     }
 
   `;
-
   return (
     <div>
       <Global />
