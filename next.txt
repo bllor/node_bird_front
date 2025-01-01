@@ -229,3 +229,149 @@ redux toolkit -- 리덕스 팀에서 만듬
 게시글이 너무 많아지면 메모리가 터져버릴 수 있는데, 이럴 경우 리액트 버츄얼라이즈드리스트 라이브러리를 이용하면
 수백개의 게시글 중에 화면에는 몇개만 보이고 나머지는 메모리에 가지고 있는다
 
+----------------------------------------------------------------------------------------------------
+리덕스와 리덕스 사가의 흐름
+
+리덕스는 데이터 중앙저장소 역할을 한다.
+다른 컴포넌트들에서 데이터를 사용할 수 있게 만들어 준다.
+리덕스 사가는 리덕스 미들웨어 중 하나로, 비동기 작업을 관리하기 위해 사용됩니다.
+
+redux/index.js
+
+const RootReducer = combineReducer({ // combineReducer로 인하여 리듀서를 여러개 사용할 수 있다.
+  idex: (state={},action)=>{ 인덱스는 next.js의 서버상태를 클라이언트 상태와 병합하기 위해서 사용된다.
+    switch (action.type){
+      case HYDRATE: //next.js에서는 ssr시 서버에서 생성된 상태를 클라이언트의 redux스토어로 전달해야하는데,
+      return{       //이과정에서 서버상태와 클라이언트 상태를 병합하기 위해 HYDRATE액션을 디스패치 한다.
+        ...state,
+        ...action.payload //서버에서 생성된 상태가 담겨있다.
+      };
+      default:
+      return state;
+    }
+  },
+  user,
+  post
+})
+
+store/configureStore.js에서
+const configureStore = (context) => {
+  console.log(context);
+  const sagaMiddleware = createSagaMiddleware();
+  const middlewares = [sagaMiddleware];
+  const enhancer =
+    process.env.NODE_ENV === "production"
+      ? compose(applyMiddleware(...middlewares))
+      : composeWithDevTools(applyMiddleware(...middlewares));
+  const store = legacy_createStore(RootReducer, enhancer);
+  store.sagaTask = sagaMiddleware.run(rootSaga);
+  return store;
+};
+store에 사가를 추가함으로써 리듀서와 같이 사용할 수 있다.
+
+ex) 게시글을 작성한다고 했을 때
+게시글 작성 버튼 클릭 시
+const onSubmit = useCallback(() => {
+    dispatch(addPost(text));
+    // setText("");// 서버에서 코멘트 작성 완료 신호가 올 때  초기화할 수 있게 만들어야 한다.
+  }, [text]);
+  함수가 호출이 되는데
+  dispatch는 redux에게 액션을 전달할 때 사용하는 함수이다.
+  
+export const addPost = (data) => ({
+  type: ADD_POST_REQUEST,
+  data,
+});
+사가 미들웨어가 디스패치된 액션을 감지하여, 사가에서도 특정 액션을 실행시켜준다. 
+export default function* rootSaga() {
+  //all은 배열 내의 모든 제너레이터를 실행시켜 준다.
+
+  yield all([fork(postSaga), fork(userSaga)]);
+}
+export default function* postSaga() {
+  yield all([
+    fork(watchAddPost),
+    fork(watchLoadPost),
+    fork(watchAddComment),
+    fork(watchRemovePost),
+  ]);
+}
+function* watchAddPost() {
+  yield takeLatest(ADD_POST_REQUEST, addPost);
+}
+
+function addPostAPI(data) {
+  return "요청";
+}
+function* addPost(action) {
+  try {
+    // const result = yield call(addPostAPI, action.data);
+    yield delay(1000);
+    const id = shortid.generate();
+    yield put({
+      type: ADD_POST_SUCCESS,
+      data: { id: id, content: action.data },
+    });
+    yield put({
+      type: ADD_POST_TO_ME,
+      data: id,
+    });
+  } catch (err) {
+    yield put({
+      type: "ADD_POST_FAILURE",
+      data: err.response.data,
+    });
+  }
+}
+addPost 제네레이터가 실행이 되고, yield put을 통해 리덕스에 액션을 디스패치(전달) 한다.
+(put을 사용하면 명시적으로 dispatch를 호출하지 않아도, redux-saga가 미들웨어로서 이를 처리하고 redux store로 보낸다)
+(store.sagaTask = sagaMiddleware.run(rootSaga); // 루트 사가 실행 이 설정으로 인해 put이 되었을 때 redux store로 전달할 수 있다.)
+
+const post = (state = initialState, action) => {
+  return produce(state, (draft) => {
+  case ADD_POST_REQUEST:
+        draft.addPostLoading = true;
+        draft.addPostDone = false;
+        draft.addPostError = null;
+        break;
+      case ADD_POST_SUCCESS:
+        draft.addPostLoading = false;
+        draft.addPostDone = true;
+        draft.mainPosts.unshift(dummy_post(action.data));
+        break;
+      case ADD_POST_FAILURE:
+        draft.addPostLoading = false;
+        draft.addPostError = action.error;
+        break;
+  })}
+
+  case ADD_POST_SUCCESS:
+        draft.addPostLoading = false;
+        draft.addPostDone = true;
+        draft.mainPosts.unshift(dummy_post(action.data));
+        break;
+  성공할 경우
+  state.mainPosts에 dummy_post의 값이 들어가고,
+mainPosts를 사용한 곳에서는 추가된 값을 볼 수 있다.
+
+*draft는 immer라이브러리의 일종으로, 불변성을 유지하면서 직관적으로 업데이트를 할 수 있게 도와주는 라이브러리이다.
+immer라이브러리 없이 불변성을 유지하려면
+case ADD_POST_SUCCESS:
+  return {
+    ...state, // 기존 상태를 복제
+    addPostLoading: false,
+    addPostDone: true,
+    mainPosts: [ // 기존 mainPosts 배열을 복제한 뒤 새 값 추가
+      dummy_post(action.data),
+      ...state.mainPosts,
+    ],
+  };
+위의 코드와 같이 사용을 해야하지만,
+immer라이브러리를 사용하면
+draft.mainPosts.unshift(dummy_post(action.data));
+처럼 짧게 사용할 수 있다.
+
+*
+불변성은 데이터가 생성된 후 변경되지 않는 특성을 의미합니다. 
+즉, 상태나 데이터 구조를 직접 변경하는 대신, 변경된 새로운 값을 만들어내는 방식입니다
+불변성을 유지할 경우 변화된 부분만 리랜더링 해줘서 상태 관리가 수월하고, 성능최적화에 유리하다
